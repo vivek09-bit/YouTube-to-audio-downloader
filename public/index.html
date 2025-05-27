@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube Audio Downloader</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; }
+    input, button { padding: 10px; width: 300px; margin: 10px; }
+    a { display: block; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>YouTube Audio Downloader</h2>
+  <input type="text" id="urlInput" placeholder="Enter YouTube URL" />
+  <br />
+  <button onclick="downloadAudio()">Download Audio</button>
+  <div id="result"></div>
+
+  <script>
+    async function downloadAudio() {
+      const url = document.getElementById('urlInput').value.trim();
+      if (!url) return alert('Please enter a YouTube URL');
+
+      document.getElementById('result').textContent = 'Downloading... please wait';
+
+      try {
+        const res = await fetch('/download', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('result').innerHTML =
+            `✅ Audio ready: <a href="${data.link}" download>Click here to download</a>`;
+        } else {
+          document.getElementById('result').textContent = `❌ Error: ${data.error}`;
+        }
+      } catch (err) {
+        document.getElementById('result').textContent = '❌ Network error';
+      }
+    }
+  </script>
+</body>
+</html>
